@@ -24,18 +24,26 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+function isValidDate(dateString) {
+  var ISO_8601 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/i;
+  var regEx = /^\d{4}-\d{2}-\d{2}$/;
+  if(!dateString.match(ISO_8601)) return false;  // Invalid format
+  var d = new Date(dateString);
+  if(!d.getTime() && d.getTime() !== 0) return false; // Invalid date
+  return d.toISOString().slice(0,10) === dateString;
+}
+
 app.get("/api/timestamp/:date_string?", function (req, res) {
   if(!req.params.date_string)
   {
     const date = new Date();
-    res.send(200, {"unix": date.getTime(), "utc" : date.toUTCString() });
+    res.send(200, {"unix": parseInt(date.getTime()), "utc": date.toUTCString() });
   }
   else
   {
-    const ts = Date.parse(req.params.date_string);
-    if (isNaN(ts) == false) {
-      const date = new Date(ts);
-      res.send(200, {"unix": date.getTime(), "utc" : date.toUTCString() });
+    if (isValidDate(req.params.date_string)) {
+      const date = new Date(req.params.date_string);
+      res.send(200, {"unix": parseInt(date.getTime()), "utc": date.toUTCString() });
     }
     else
     {
