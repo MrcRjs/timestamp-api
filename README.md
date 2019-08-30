@@ -17,4 +17,4 @@ e.g. `{"unix": 1479663089000 ,"utc": "Sun, 20 Nov 2016 17:31:29 GMT"}`.
 * [GET /api/timestamp/2019-08-30T07:04:05.763Z](https://west-turkey.glitch.me/api/timestamp/2019-08-30T07:04:05.763Z)
 
 #### Example output:
-* { "unix": 1450137600000, "natural": "December 15, 2015" }
+* { "unix": 1450137600000, "utc": "December 15, 2015" }
