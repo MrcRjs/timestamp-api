@@ -24,13 +24,19 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-function isValidDate(dateString) {
-  var ISO_8601 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/i;
-  var regEx = /^\d{4}-\d{2}-\d{2}$/;
-  if(!dateString.match(ISO_8601)) return false;  // Invalid format
-  var d = new Date(dateString);
-  if(!d.getTime() && d.getTime() !== 0) return false; // Invalid date
-  return d.toISOString().slice(0,10) === dateString;
+function isValidISODate(dateString) {
+  const ISO_8601 = /^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/i;
+  if(dateString.match(ISO_8601)){
+    return true
+  }
+  return false;
+}
+function isValidTimestamp(dateString) {
+  const timeStamp = /\d{13}/g;
+  if(dateString.match(timeStamp)){
+    return true
+  }
+  return false;
 }
 
 app.get("/api/timestamp/:date_string?", function (req, res) {
@@ -41,8 +47,12 @@ app.get("/api/timestamp/:date_string?", function (req, res) {
   }
   else
   {
-    if (isValidDate(req.params.date_string)) {
+    if (isValidISODate(req.params.date_string)) {
       const date = new Date(req.params.date_string);
+      res.send(200, {"unix": parseInt(date.getTime()), "utc": date.toUTCString() });
+    }
+    else if(isValidTimestamp(req.params.date_string)) {
+      const date = new Date(parseInt(req.params.date_string));
       res.send(200, {"unix": parseInt(date.getTime()), "utc": date.toUTCString() });
     }
     else
